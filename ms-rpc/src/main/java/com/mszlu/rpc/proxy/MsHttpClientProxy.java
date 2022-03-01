@@ -1,7 +1,6 @@
 package com.mszlu.rpc.proxy;
 
 import com.mszlu.rpc.annontation.MsMapping;
-import com.sun.org.apache.regexp.internal.RE;
 import org.springframework.web.client.RestTemplate;
 
 import java.lang.reflect.InvocationHandler;
