@@ -2,6 +2,7 @@ package com.mszlu.rpc.sping;
 
 import com.mszlu.rpc.annontation.MsReference;
 import com.mszlu.rpc.annontation.MsService;
+import com.mszlu.rpc.factory.SingletonFactory;
 import com.mszlu.rpc.proxy.MsRpcClientProxy;
 import com.mszlu.rpc.server.MsServiceProvider;
 import lombok.extern.slf4j.Slf4j;
@@ -18,8 +19,12 @@ public class MsRpcSpringBeanPostProcessor implements BeanPostProcessor {
 
     public MsRpcSpringBeanPostProcessor(){
         //这里采取new的方式对应生成
-        //我们希望在构造方法里面，在这个地方调用的时候，我们希望用一个单例的工厂生成这个对象，保证线程安全
-        msServiceProvider = new MsServiceProvider();
+        //我们希望在构造方法里面，在这个地方调用的时候，我们希望用一个单例工厂生成这个对象，保证线程安全
+        //单例工厂的好处
+        //1、即使我们调用多次，我们也能保证工厂实例是唯一的，防止线程安全问题
+        //2、而且我们MsServiceProvider 在别的类也需要使用，如果在这个地方创建，无法引用，
+        // 但是如果用单例工厂我们可以便于其他类使用，因为始终是同一个对象
+        msServiceProvider = SingletonFactory.getInstance(MsServiceProvider.class );
     }
 
     @Override
