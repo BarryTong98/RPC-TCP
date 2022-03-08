@@ -1,4 +1,4 @@
-package com.mszlu.rpc.netty.handler.server;
+package com.mszlu.rpc.netty.handler;
 
 import com.mszlu.rpc.netty.codec.MsRpcDecoder;
 import com.mszlu.rpc.netty.codec.MsRpcEncoder;

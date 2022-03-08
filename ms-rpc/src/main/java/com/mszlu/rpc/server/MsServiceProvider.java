@@ -19,7 +19,7 @@ public class MsServiceProvider {
     public void publishService(MsService msService, Object service) {
         registerService(msService, service);
         //启动nettyServer
-        NettyServer nettyServer = new NettyServer()
+        NettyServer nettyServer = new NettyServer();
     }
 
     private void registerService(MsService msService, Object service) {

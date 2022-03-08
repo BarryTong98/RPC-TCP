@@ -3,7 +3,6 @@ package com.mszlu.rpc.netty;
 import com.mszlu.rpc.annontation.MsService;
 import com.mszlu.rpc.netty.handler.MsRpcThreadFactory;
 import com.mszlu.rpc.netty.handler.NettyServerInitiator;
-import com.mszlu.rpc.netty.handler.server.NettyServerInitiator;
 import com.mszlu.rpc.server.MsServiceProvider;
 import com.mszlu.rpc.utils.RuntimeUtil;
 import io.netty.bootstrap.ServerBootstrap;
