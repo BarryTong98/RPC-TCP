@@ -2,14 +2,18 @@ package com.mszlu.rpc.netty.codec;
 
 import com.mszlu.rpc.compress.Compress;
 import com.mszlu.rpc.constant.CompressTypeEnum;
+import com.mszlu.rpc.constant.MessageTypeEnum;
 import com.mszlu.rpc.constant.MsRpcConstants;
 import com.mszlu.rpc.constant.SerializationTypeEnum;
 import com.mszlu.rpc.exception.MsRpcException;
 import com.mszlu.rpc.message.MsMessage;
+import com.mszlu.rpc.message.MsRequest;
+import com.mszlu.rpc.message.MsResponse;
 import com.mszlu.rpc.serialize.Serializer;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
+import io.protostuff.Message;
 
 import java.util.ServiceLoader;
 
@@ -29,6 +33,8 @@ import java.util.ServiceLoader;
  * <p>
  * 以魔法数开头4个bit传过来的才是我们TCP协议的传输过来的，其他的无法解析
  */
+
+//编码就是不管在客户端发送还是在服务端接收，会先由解码器进行解码
 public class MsRpcDecoder extends LengthFieldBasedFrameDecoder {
 
     public MsRpcDecoder() {
@@ -110,15 +116,14 @@ public class MsRpcDecoder extends LengthFieldBasedFrameDecoder {
             //1、客户端发请求 Request
             //2、服务端响应数据 Response
             //MsRequest  MsResponse
-            if(request){
-                serializer.deserialize(bodyData,);
-                msMessage.setData(request);
+            if(MessageTypeEnum.REQUEST.getCode() == messageType){
+                MsRequest msRequest = (MsRequest) serializer.deserialize(bodyData, MsRequest.class);
+                msMessage.setData(msRequest);
             }
-            if(response){
-                serializer.deserialize(bodyData,);
-                msMessage.setData(response);
+            if(MessageTypeEnum.RESPONSE.getCode() == messageType){
+                MsResponse msResponse = (MsResponse) serializer.deserialize(bodyData, MsResponse.class);
+                msMessage.setData(msResponse);
             }
-            serializer.deserialize(bodyData, );
         }
         return msMessage;
     }

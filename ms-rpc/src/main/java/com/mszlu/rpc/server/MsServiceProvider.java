@@ -24,11 +24,11 @@ public class MsServiceProvider {
 
     private void registerService(MsService msService, Object service) {
         String version = msService.version();
-        String canonicalName = service.getClass().getInterfaces()[0].getCanonicalName();
-        log.info("发布了服务：{}", canonicalName);
+        String interfaceName = service.getClass().getInterfaces()[0].getCanonicalName();
+        log.info("发布了服务：{}", interfaceName);
         //key: canonicalName+version
         //value: service
-        serviceMap.put(canonicalName + version, service);
+        serviceMap.put(interfaceName + version, service);
     }
 
     public Object getService(String serviceName) {
