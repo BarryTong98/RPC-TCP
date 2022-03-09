@@ -3,7 +3,10 @@ package com.mszlu.rpc.netty.codec;
 import com.mszlu.rpc.compress.Compress;
 import com.mszlu.rpc.constant.CompressTypeEnum;
 import com.mszlu.rpc.constant.MsRpcConstants;
+import com.mszlu.rpc.constant.SerializationTypeEnum;
 import com.mszlu.rpc.exception.MsRpcException;
+import com.mszlu.rpc.message.MsMessage;
+import com.mszlu.rpc.serialize.Serializer;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
@@ -84,13 +87,14 @@ public class MsRpcDecoder extends LengthFieldBasedFrameDecoder {
         //4.messageType 消息类型
         byte messageType = frame.readByte();
         //5.序列化类型
-        byte codecType = frame.readByte();
+        byte codec = frame.readByte();
         //6.压缩类型
         byte compressType = frame.readByte();
         //7. 请求id
         int requestId = frame.readInt();
         //8. 读取数据
         int dataLength = fullLength - MsRpcConstants.TOTAL_LENGTH;
+        MsMessage msMessage = MsMessage.builder().messageType(messageType).codec(codec).compress(compressType).requestId(requestId).build();
         if (dataLength > 0) {
             //有数据。读取body的数据
             byte[] bodyData = new byte[dataLength];
@@ -100,9 +104,39 @@ public class MsRpcDecoder extends LengthFieldBasedFrameDecoder {
             //解压缩 根据compressType 获取name
             compress.decompress(bodyData);
             //反序列化 与解压缩基本是一致的
-
+            Serializer serializer = loadSerializer(compressType);
+            //这里我么需要通过将bodyData反序列化成什么deserialize(bodyData,需要转换成的类 );
+            //根据不同的业务 进行反序列化
+            //1、客户端发请求 Request
+            //2、服务端响应数据 Response
+            //MsRequest  MsResponse
+            if(request){
+                serializer.deserialize(bodyData,);
+                msMessage.setData(request);
+            }
+            if(response){
+                serializer.deserialize(bodyData,);
+                msMessage.setData(response);
+            }
+            serializer.deserialize(bodyData, );
         }
-        return null;
+        return msMessage;
+    }
+
+    private Serializer loadSerializer(byte codec) {
+        //通过对应的type拿到name
+        String name = SerializationTypeEnum.getName(codec);
+        //在这里name会有很多种压缩方式，如果我们使用if else进行多次判断，那么整个代码就会十分的繁杂
+        //加载我们的压缩，在META-INF/services新建com.mszlu.rpc.compress.Compress 文件，其中的内容为 com.mszlu.rpc.compress.GzipCompress
+        //他会对这个路径进行匹配，这个load其实就是一个列表，去列表中进行查询name
+        ServiceLoader<Serializer> load = ServiceLoader.load(Serializer.class);
+        for (Serializer serializer : load) {
+            //name.equals(compress.name())不能这样子去使用，因为name可能等于null
+            if (serializer.name().equals(name)) {
+                return serializer;
+            }
+        }
+        throw new MsRpcException("无对应的序列化类型");
     }
 
     private Compress loadCompress(byte compressType) {
