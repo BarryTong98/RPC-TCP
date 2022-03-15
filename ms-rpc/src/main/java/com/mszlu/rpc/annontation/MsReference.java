@@ -8,9 +8,11 @@ import java.lang.annotation.*;
 @Documented
 @Inherited
 public @interface MsReference {
-
-    String uri() default "";
-
-    Class resultType();
+    //netty的服务主机名
+    String host();
+    //netty服务的端口号
+    int port();
+    //调用服务提供方的版本号
+    String version() default "1.0";
 }
 

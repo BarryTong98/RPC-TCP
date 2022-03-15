@@ -41,7 +41,7 @@ public class MsRpcSpringBeanPostProcessor implements BeanPostProcessor {
         if(bean.getClass().isAnnotationPresent(MsService.class)){
             MsReference msReference = bean.getClass().getAnnotation(MsReference.class);
             //加了MsService的bean就被找到了，就把其中的方法 都发布为服务
-            //把对应的注解MsService和bean，注解里面又可能有对应的参数，我们把bean船进去
+            //把对应的注解MsService和bean，注解里面又可能有对应的参数，我们把bean传进去
             msServiceProvider.publishService(msService, bean);
         }
         Field[] declaredFields = bean.getClass().getDeclaredFields();
@@ -50,7 +50,7 @@ public class MsRpcSpringBeanPostProcessor implements BeanPostProcessor {
             if(msReference != null){
                 //找到了 加了MsReference 的字段，就要生成代理类， 当我们的接口方法调用的时候，实际上就是访问的代理类中的invoke方法
                 //在invoke方法中实现对应的调用
-                MsRpcClientProxy msRpcClientProxy = new MsRpcClientProxy();
+                MsRpcClientProxy msRpcClientProxy = new MsRpcClientProxy(msReference);
                 //这里是根据declarcedField的类型，生成对应的代理类
                 Object proxy = msRpcClientProxy.getProxy(declaredField.getType());
                 //当isAccessible()的结果是false时不允许通过反射访问该字段, isAccessible()默认是false
