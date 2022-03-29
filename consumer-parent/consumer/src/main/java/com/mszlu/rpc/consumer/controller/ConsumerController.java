@@ -33,11 +33,13 @@ public class ConsumerController {
 //        //Get access to the product query service by http
 //        return goodsHttpRpc.findGoods(id);
 //    }
-    @MsReference(uri = "http://localhost:7777/", resultType = Goods.class)
+
+    //在微服务里面，服务提供方会有多个，那么这边只能连接一个
+    @MsReference(version = "1.0")
     private GoodsService goodsService;
 
     @GetMapping("/find/{id}")
-    public Goods find(@PathVariable Long id){
+    public Goods find(@PathVariable Long id) {
         return goodsService.findGoods(id);
     }
 }

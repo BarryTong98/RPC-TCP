@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class NettyServer implements MsServer {
+    public final static int PORT = 13567;
 
     private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;
@@ -51,7 +52,7 @@ public class NettyServer implements MsServer {
                     .childHandler(new NettyServerInitiator(eventExecutors));
 
             // 绑定端口，同步等待绑定成功
-            b.bind(13567).sync().channel();
+            b.bind(msServiceProvider.getMsRpcConfig().getProviderPort()).sync().channel();
             isRunning = true;
             //进程关闭的钩子，这样子会通过一个线程去关闭
             //addShutdownHook 不管做任何shutdown的操作，我们打开一个线程去关闭nettyserver

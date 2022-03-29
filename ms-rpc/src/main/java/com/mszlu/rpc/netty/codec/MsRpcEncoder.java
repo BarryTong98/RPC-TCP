@@ -48,7 +48,7 @@ public class MsRpcEncoder extends MessageToByteEncoder<MsMessage> {
         //6. 1B compress（压缩类型）
         out.writeByte(msMessage.getCompress());
         //这里的Request id
-        out.writeByte(ATOMIC_INTEGER.getAndIncrement());
+        out.writeInt(ATOMIC_INTEGER.getAndIncrement());
 
         Object data = msMessage.getData();
         //header 长度为16

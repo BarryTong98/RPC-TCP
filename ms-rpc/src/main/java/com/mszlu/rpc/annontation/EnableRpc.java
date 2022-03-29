@@ -1,7 +1,6 @@
 package com.mszlu.rpc.annontation;
 
-import com.mszlu.rpc.beans.MsBeanDefinitionRegistry;
-import com.mszlu.rpc.sping.MsRpcSpringBeanPostProcessor;
+import com.mszlu.rpc.spring.MsRpcSpringBeanPostProcessor;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;
@@ -17,4 +16,18 @@ import java.lang.annotation.*;
 //如果我们要多个地方使用，我们在Import那边要导入多个
 //导入多个会有对应的风险，spring默认都是单例的管理
 public @interface EnableRpc {
+    //这里是为了将nacos部署集群
+    //nacos主机名
+    String nacosHost() default "locahost";
+
+    //nacos端口号
+    int nacosPort() default 8848;
+
+    //nacos组，同一个组内 互通，并且组成集群
+    String nacosGroup() default "ms-rpc-group";
+
+    //server服务端口
+    int serverPort() default 13567;
+
+
 }
